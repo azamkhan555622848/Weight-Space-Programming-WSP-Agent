@@ -117,12 +117,25 @@ def seatbelt_profile(work_dir: str, ro_paths: list[str], dirs: list[str], home: 
 
 
 # ------------------------------------------------------------------------------------------------ used by the kernel
+def interpreter_libs(dirs: list[str]) -> str:
+    """The LD_LIBRARY_PATH entries that point into the interpreter's own folders. A Python built as a shared library may find
+    libpython only through LD_LIBRARY_PATH (actions/setup-python sets it, for one), and --clearenv would drop it. Entries
+    elsewhere are left out: they could name folders the sandbox doesn't show, and these folders are visible inside anyway."""
+    keep = [p for p in os.environ.get("LD_LIBRARY_PATH", "").split(os.pathsep)
+            if p and any(_inside(os.path.realpath(p), d) for d in dirs)]
+    return os.pathsep.join(dict.fromkeys(keep))
+
+
 def wrap(policy: Policy, cmd: list[str], work_dir: str, ro_paths: list[str], fixed_env: dict,
          base_env: dict) -> tuple[list[str], dict]:
     """-> (command, environment) that run `cmd` under the policy."""
     if policy.kind == "bwrap":
+        dirs = python_dirs(cmd[0])
         env = dict(fixed_env, HOME="/tmp", PATH="/usr/bin:/bin", LANG="C.UTF-8")
-        return (bwrap_argv(work_dir, ro_paths, env, python_dirs(cmd[0]), shutil.which("bwrap") or "bwrap") + cmd,
+        libs = interpreter_libs(dirs)
+        if libs:
+            env["LD_LIBRARY_PATH"] = libs
+        return (bwrap_argv(work_dir, ro_paths, env, dirs, shutil.which("bwrap") or "bwrap") + cmd,
                 {"PATH": os.environ.get("PATH", "/usr/bin:/bin")})
     if policy.kind == "seatbelt":
         tmp = os.path.realpath(tempfile.gettempdir())

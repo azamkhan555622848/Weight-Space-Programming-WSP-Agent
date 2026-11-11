@@ -85,6 +85,15 @@ def commands():
     home = os.path.expanduser("~")
     check("python_dirs: never the project or home as a whole", all(os.path.normcase(x) not in
           (os.path.normcase(ROOT), os.path.normcase(home)) and not sandbox._inside(ROOT, x) for x in d), d)
+    inside, outside = os.path.join(d[0], "lib") if d else "", os.path.realpath(os.path.join(tempfile.gettempdir(), "elsewhere-lib"))
+    old = os.environ.get("LD_LIBRARY_PATH")
+    os.environ["LD_LIBRARY_PATH"] = os.pathsep.join([inside, outside])
+    try:
+        argv, _ = sandbox.wrap(sandbox.Policy("bwrap"), [sys.executable, "-c", "pass"], "/x/work", [], {}, {})
+    finally:
+        os.environ.pop("LD_LIBRARY_PATH") if old is None else os.environ.__setitem__("LD_LIBRARY_PATH", old)
+    i = next((j for j in range(len(argv) - 2) if argv[j] == "--setenv" and argv[j + 1] == "LD_LIBRARY_PATH"), None)
+    check("bwrap: the interpreter's library folder is kept, others aren't", d and i is not None and argv[i + 2] == inside, argv)
     pol = sandbox.resolve_policy()
     check("policy matches the system", (pol.kind == "none" and pol.note) if os.name == "nt" else pol.kind in ("bwrap", "seatbelt", "none"), pol)
 

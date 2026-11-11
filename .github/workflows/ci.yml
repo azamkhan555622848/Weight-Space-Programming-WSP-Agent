@@ -34,6 +34,7 @@ jobs:
 
       # A clean virtual environment, as the README asks for: the sandbox only exposes this environment to the kernel.
       - name: Install
+        id: install
         run: |
           python -m venv .venv
           if [ "$RUNNER_OS" = "Windows" ]; then PY=.venv/Scripts/python; else PY=.venv/bin/python; fi
@@ -42,37 +43,39 @@ jobs:
           "$PY" -m pip install "torch==2.10.*" --index-url https://download.pytorch.org/whl/cpu
           "$PY" -m pip install -e ".[qwen,edge,openai,tui]"
 
+      # Every group runs even when an earlier one failed, so one run shows every failure. tests/run_all.py also reports a
+      # failing file as an annotation, readable on the run's page without signing in.
       - name: Sandbox and attack tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
-          "$PY" tests/test_sandbox.py
+          "$PY" tests/run_all.py test_sandbox.py
 
       - name: A real sandbox must have been tested on Linux and macOS
-        if: runner.os != 'Windows'
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && runner.os != 'Windows' }}
         run: |
           "$PY" -c "from wsp import sandbox; p = sandbox.resolve_policy(); print(p); raise SystemExit(0 if p.kind != 'none' else 1)"
 
       - name: Kernel, sampler and harness tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
-          "$PY" tests/test_kernel.py
-          "$PY" tests/test_sampler.py
-          "$PY" tests/test_harness_edge.py
-          "$PY" tests/test_grading_vs_paper.py
+          "$PY" tests/run_all.py test_kernel.py test_sampler.py test_harness_edge.py test_grading_vs_paper.py
 
       - name: Any network, interactive sessions
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
-          "$PY" tests/test_workspace.py
-          "$PY" tests/test_interactive.py
+          "$PY" tests/run_all.py test_workspace.py test_interactive.py
 
       - name: Backends, commands and interface
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
-          "$PY" tests/test_backends.py
-          "$PY" tests/test_runs.py
-          "$PY" tests/test_tui.py
+          "$PY" tests/run_all.py test_backends.py test_runs.py test_tui.py
 
       - name: wsp doctor runs
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
           "$PY" -m wsp.cli doctor || true
 
       - name: No secrets or personal paths in the repository
+        if: ${{ !cancelled() }}
         run: |
           ! git grep -nIE "sk-ant-[A-Za-z0-9_-]{10,}|sk-proj-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{20,}"
