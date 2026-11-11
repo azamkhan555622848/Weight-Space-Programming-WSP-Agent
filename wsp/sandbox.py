@@ -96,18 +96,25 @@ def bwrap_argv(work_dir: str, ro_paths: list[str], env: dict, dirs: list[str], b
 
 # ------------------------------------------------------------------------------------------------ macOS: sandbox-exec
 def seatbelt_profile(work_dir: str, ro_paths: list[str], dirs: list[str], home: str, project: str, tmp: str) -> str:
-    """Later rules win. Reads of file metadata stay allowed, because Python checks paths on the way to its own files."""
-    q = lambda p: json.dumps(os.path.realpath(p))      # noqa: E731 (SBPL strings are quoted like JSON)
-    readable = [f"(subpath {q(d)})" for d in dirs + [work_dir, tmp]] + [f"(literal {q(p)})" for p in ro_paths]
+    """Later rules win, so the order is: writes only to the temp folder; home and the project hidden, even where they lie
+    inside the temp folder; then the exceptions (the work folder, the interpreter, the listed files). The temp folder comes
+    back after the hiding only when it lies inside home or the project, which brings back the temp folder alone. Reads of
+    file metadata stay allowed, because Python checks paths on the way to its own files."""
+    r = os.path.realpath
+    q = lambda p: json.dumps(r(p))      # noqa: E731 (SBPL strings are quoted like JSON)
+    tmp_hidden = _inside(r(tmp), r(home)) or _inside(r(tmp), r(project))
+    readable = [f"(subpath {q(d)})" for d in dirs + [work_dir] + ([tmp] if tmp_hidden else [])]
+    readable += [f"(literal {q(p)})" for p in ro_paths]
+    writable = [f"(subpath {q(d)})" for d in [work_dir] + ([tmp] if tmp_hidden else [])]
     return "\n".join([
         "(version 1)",
         "(allow default)",
         "(deny network*)",
         "(deny file-write*)",
-        f'(allow file-write* (subpath {q(work_dir)}) (subpath {q(tmp)}) (literal "/dev/null") (literal "/dev/zero") '
-        '(literal "/dev/tty"))',
-        f"(deny file-read* (subpath {q(home)}) (subpath {q(project)}))",
+        f'(allow file-write* (subpath {q(tmp)}) (literal "/dev/null") (literal "/dev/zero") (literal "/dev/tty"))',
+        f"(deny file-read* file-write* (subpath {q(home)}) (subpath {q(project)}))",
         f"(allow file-read* {' '.join(readable)})",
+        f"(allow file-write* {' '.join(writable)})",
         "(allow file-read-metadata)",
         # the keychain, where Claude Code keeps its login on a Mac, and opening apps or links
         '(deny mach-lookup (global-name "com.apple.SecurityServer") (global-name "com.apple.securityd.xpc") '
@@ -198,11 +205,12 @@ def can_read(p):
         return True
     except OSError:
         return False
-def can_write(p):
+def can_write(p, keep=False):
     try:
         with open(p, "wb") as f:
             f.write(b"x")
-        os.remove(p)
+        if not keep:
+            os.remove(p)
         return True
     except OSError:
         return False
@@ -213,7 +221,7 @@ try:
 except Exception:
     net = False
 print(json.dumps({"read_home": can_read(HOME_DECOY), "read_project": can_read(PROJECT_DECOY),
-                  "write_home": can_write(HOME_PROBE), "write_project": can_write(PROJECT_PROBE),
+                  "write_home": can_write(HOME_PROBE, True), "write_project": can_write(PROJECT_PROBE, True),
                   "network": net, "write_work": can_write("self_test.tmp")}))
 '''
 _tested: dict = {}
@@ -249,6 +257,11 @@ def _self_test(kernel) -> str | None:
         if r["status"] != "ok" or r["error"]:
             return _explain(r["out"])
         res = json.loads(r["out"].strip().splitlines()[-1])
+        # A write counts if it reached the real file system. Inside bubblewrap, the folders on the way to a bound folder
+        # (such as a virtual environment inside the project) exist on the sandbox's own temporary file system: a write
+        # there succeeds and is gone with the sandbox.
+        res["write_home"] = os.path.exists(names["HOME_PROBE"])
+        res["write_project"] = os.path.exists(names["PROJECT_PROBE"])
         bad = [k_ for k_ in ("read_home", "read_project", "write_home", "write_project", "network") if res[k_]]
         if bad:
             return "code inside it could still do this: " + ", ".join(bad)

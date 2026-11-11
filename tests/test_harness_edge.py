@@ -15,6 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from wsp.harness import Harness  # noqa: E402
 from wsp.llm import Reply, ScriptedBackend  # noqa: E402
+from wsp.sandbox import Policy  # noqa: E402
 from wsp.tasks.base import TaskNotReady  # noqa: E402
 from wsp.tasks.edge import resnet8 as R  # noqa: E402
 from wsp.tasks.edge.task import EdgeBackdoorTask  # noqa: E402
@@ -66,8 +67,9 @@ def safety_tests(tmp, data):
         run, cfg = os.path.join(tmp, name), {**base, **over}
         return run, Harness(EdgeBackdoorTask(cfg, run, os.path.join(run, "work")), ScriptedBackend(script), run, cfg)
 
-    # no sandbox, not accepted: refuses before any model call
+    # no sandbox, not accepted: refuses before any model call (set here, since Linux and macOS have one)
     run, h = new("no_consent", [FWD(REQ1)], accept_no_sandbox=False)
+    h.kernel.policy = Policy("none", "No sandbox in this test.")
     msg = stops(h.run)
     check("no sandbox and not accepted: refuses", msg and "without a sandbox" in msg and not h.llm.received, msg)
 

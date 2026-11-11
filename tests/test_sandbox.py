@@ -73,14 +73,26 @@ def commands():
           and "/home" not in joined and ".env " not in joined, joined)
     p = sandbox.seatbelt_profile("/x/runs/r/work", ro, ["/opt/python", "/x/.venv"], "/Users/me", "/x", "/private/tmp")
     lines = p.splitlines()
-    check("seatbelt: no network, writes denied except work and temp", "(deny network*)" in lines and "(deny file-write*)" in lines
-          and any(ln.startswith("(allow file-write*") and "work" in ln and "tmp" in ln for ln in lines), p)
-    deny = next(i for i, ln in enumerate(lines) if ln.startswith("(deny file-read*"))
-    allow = next(i for i, ln in enumerate(lines) if ln.startswith("(allow file-read* "))
     q = lambda path: json.dumps(os.path.realpath(path))      # noqa: E731
-    check("seatbelt: home and project unreadable, exceptions after", deny < allow and q("/Users/me") in lines[deny]
-          and q("/x") in lines[deny] and q("/x/.venv") in lines[allow] and q(ro[0]) in lines[allow], p)
+    deny = next(i for i, ln in enumerate(lines) if ln.startswith("(deny file-read* file-write*"))
+    allow = next(i for i, ln in enumerate(lines) if ln.startswith("(allow file-read* "))
+    writes = [i for i, ln in enumerate(lines) if ln.startswith("(allow file-write*")]
+    check("seatbelt: no network, writes denied except temp, then the work folder",
+          "(deny network*)" in lines and "(deny file-write*)" in lines and len(writes) == 2 and writes[0] < deny < writes[1]
+          and q("/private/tmp") in lines[writes[0]] and q("/x/runs/r/work") in lines[writes[1]], p)
+    check("seatbelt: home and project hidden for reads and writes, exceptions after", deny < allow
+          and q("/Users/me") in lines[deny] and q("/x") in lines[deny] and q("/x/.venv") in lines[allow] and q(ro[0]) in lines[allow], p)
     check("seatbelt: the keychain is off limits", "com.apple.SecurityServer" in p and "(deny mach-lookup" in p, p)
+    # home inside the temp folder (as in tests that point HOME at a temporary folder): the temp folder must not bring it back
+    p = sandbox.seatbelt_profile("/w/work", [], ["/opt/python"], "/private/tmp/h", "/x", "/private/tmp")
+    after = "\n".join(ln for ln in p.splitlines() if ln.startswith(("(allow file-read* ", "(allow file-write* (subpath " + q("/w/work"))))
+    check("seatbelt: home inside the temp folder stays hidden", q("/private/tmp") not in after and q("/private/tmp/h") in p, p)
+    # the temp folder inside home: it comes back alone, home doesn't
+    p = sandbox.seatbelt_profile("/w/work", [], ["/opt/python"], "/Users/me", "/x", "/Users/me/tmp")
+    lines = p.splitlines()
+    deny = next(i for i, ln in enumerate(lines) if ln.startswith("(deny file-read* file-write*"))
+    check("seatbelt: a temp folder inside home comes back alone", all(q("/Users/me/tmp") in ln for ln in lines[deny + 1:deny + 3])
+          and not any(q("/Users/me") + ")" in ln for ln in lines[deny + 1:]), p)
     d = sandbox.python_dirs()
     home = os.path.expanduser("~")
     check("python_dirs: never the project or home as a whole", all(os.path.normcase(x) not in
@@ -265,6 +277,17 @@ except OSError:
     k.close()
     k2.close()
     shutil.rmtree(d, ignore_errors=True)
+    # home inside the temp folder, as the interface tests set it: still hidden
+    home, old = tempfile.mkdtemp(prefix="wsp-home-"), os.environ.get("HOME")
+    os.environ["HOME"] = home
+    try:
+        k3 = Kernel(tempfile.mkdtemp(), timeout=180, policy=pol)
+        why = sandbox._self_test(k3)
+        k3.close()
+    finally:
+        os.environ.pop("HOME") if old is None else os.environ.__setitem__("HOME", old)
+        shutil.rmtree(home, ignore_errors=True)
+    check(f"live {pol.kind}: a home inside the temp folder stays hidden", why is None, why)
 
 
 def main():
