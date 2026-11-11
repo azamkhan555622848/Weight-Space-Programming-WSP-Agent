@@ -1,5 +1,7 @@
 # WSP Agent
 
+[![CI](https://github.com/azamkhan555622848/Weight-Space-Programming-WSP-Agent/actions/workflows/ci.yml/badge.svg)](https://github.com/azamkhan555622848/Weight-Space-Programming-WSP-Agent/actions/workflows/ci.yml)
+
 A chat agent that programs neural networks by reading and editing their weights directly. You point it at a network, say what
 it should do differently, and it finds the mechanism behind the behaviour and changes it, with no training and no gradients.
 
@@ -36,7 +38,8 @@ What the agent has done so far, on those benchmarks:
 
 **Early release.** Built and tested on Windows 11 with an RTX 4070 SUPER. The chat interface and the general "any network" path
 are new: they pass their tests with a scripted editor and on real models, but a real editor model has so far only exchanged a
-few messages through them. No conversation with one has run code or a forward pass yet. Linux and macOS are untested until the workflow in `.github/workflows/ci.yml` has run. See
+few messages through them. No conversation with one has run code or a forward pass yet. On Linux and macOS the automated tests
+and the sandbox pass in CI (CPU only); no GPU run or real session has happened there yet. See
 [what has been tested](#what-has-been-tested).
 
 ## Quick start
@@ -174,11 +177,12 @@ A long unattended session may hit your plan's limits, and could put your account
 | System | The editor's code runs | What it can reach |
 |---|---|---|
 | Linux, with bubblewrap | in a sandbox | only the session's work folder, with no network |
-| macOS | in a sandbox (`sandbox-exec`, which Apple has deprecated) | only the session's work folder and the temp folder, with no network |
+| macOS | in a sandbox (`sandbox-exec`, which Apple has deprecated) | only the session's work folder and the temp folder (never your home folder or this project, even inside it), with no network |
 | Windows, or Linux without bubblewrap | **with no sandbox, once you accept that** | **everything your user can reach**, including `.env` and the login files of AI command-line tools |
 
 On Windows, use WSL2 for a real sandbox (`wsl --install Ubuntu`, then follow the Linux steps). A sandbox's self-test runs before
-anything is paid for: it tries to read decoy files and reach the network, and the session refuses to start if any of that works.
+anything is paid for: it tries to read and write decoy files and to reach the network, and the session refuses to start if any of
+that works.
 
 Inside the sandbox, `.env`, login files, your project and your datasets are out of reach; the weights are readable through the
 helpers only. The harness, which has them, runs outside it, and it refuses to follow links the code leaves in the work folder. API
@@ -343,17 +347,17 @@ HF transformers on one consumer GPU, without vLLM: about 1,000 generated tokens 
 
 | | Windows 11, RTX 4070 SUPER | Linux | macOS |
 |---|---|---|---|
-| Harness, kernel, commands, chat interface (automated tests, scripted editor) | passing | in CI, not yet run | in CI, not yet run |
-| Any network: a tiny PyTorch net and a tiny GPT-2 built by the tests | passing | in CI, not yet run | in CI, not yet run |
+| Harness, kernel, commands, chat interface (automated tests, scripted editor) | passing, here and in CI | passing in CI | passing in CI |
+| Any network: a tiny PyTorch net and a tiny GPT-2 built by the tests | passing, here and in CI | passing in CI | passing in CI |
 | Any network: Qwen3.5-0.8B as a general target, on the GPU | passing; matches the benchmark's engine | not yet | not available |
 | **A whole conversation with a real editor model** | **3 turns of messages only; none that ran code or a pass** | not yet | not yet |
-| Clean install from the repository's files | passing for the benchmarks (before the chat interface) | in CI, not yet run | in CI, not yet run |
-| Sandbox and its attack tests | no sandbox on this system; link attacks passing | in CI, not yet run | in CI, not yet run |
+| Clean install from the repository's files (CPU PyTorch) | passing in CI | passing in CI | passing in CI |
+| Sandbox and its attack tests | no sandbox on this system; link attacks passing | passing in CI (bubblewrap), including the live self-test | passing in CI (Seatbelt), including the live self-test |
 | Benchmarks, full runs | 5 backdoor runs, 1 Qwen run | not yet | not yet |
 | `claude-cli`, live | 3 short turns | not yet | not yet |
 | `openai`, `codex-cli`, live | not yet; tested against stand-ins | not yet | not yet |
 
-Run the tests with `python tests/<name>.py`:
+Run the CPU tests with `python tests/run_all.py`, or one file with `python tests/<name>.py`:
 
 - **CPU:** `test_kernel`, `test_sandbox`, `test_harness_edge`, `test_workspace`, `test_interactive`, `test_backends`, `test_runs`,
   `test_tui`, `test_sampler`, `test_grading_vs_paper` (reproduces all 1,600 of the paper's grades; skips without its logs).
