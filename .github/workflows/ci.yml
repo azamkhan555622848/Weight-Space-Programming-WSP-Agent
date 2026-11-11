@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      PYTHONIOENCODING: utf-8
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Ubuntu 23.10 and newer restrict the user namespaces bubblewrap needs. wsp doctor explains the same fix to users.
+      - name: Install bubblewrap (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      # A clean virtual environment, as the README asks for: the sandbox only exposes this environment to the kernel.
+      - name: Install
+        run: |
+          python -m venv .venv
+          if [ "$RUNNER_OS" = "Windows" ]; then PY=.venv/Scripts/python; else PY=.venv/bin/python; fi
+          echo "PY=$PY" >> "$GITHUB_ENV"
+          "$PY" -m pip install --upgrade pip
+          "$PY" -m pip install "torch==2.10.*" --index-url https://download.pytorch.org/whl/cpu
+          "$PY" -m pip install -e ".[qwen,edge,openai,tui]"
+
+      - name: Sandbox and attack tests
+        run: |
+          "$PY" tests/test_sandbox.py
+
+      - name: A real sandbox must have been tested on Linux and macOS
+        if: runner.os != 'Windows'
+        run: |
+          "$PY" -c "from wsp import sandbox; p = sandbox.resolve_policy(); print(p); raise SystemExit(0 if p.kind != 'none' else 1)"
+
+      - name: Kernel, sampler and harness tests
+        run: |
+          "$PY" tests/test_kernel.py
+          "$PY" tests/test_sampler.py
+          "$PY" tests/test_harness_edge.py
+          "$PY" tests/test_grading_vs_paper.py
+
+      - name: Any network, interactive sessions
+        run: |
+          "$PY" tests/test_workspace.py
+          "$PY" tests/test_interactive.py
+
+      - name: Backends, commands and interface
+        run: |
+          "$PY" tests/test_backends.py
+          "$PY" tests/test_runs.py
+          "$PY" tests/test_tui.py
+
+      - name: wsp doctor runs
+        run: |
+          "$PY" -m wsp.cli doctor || true
+
+      - name: No secrets or personal paths in the repository
+        run: |
+          ! git grep -nIE "sk-ant-[A-Za-z0-9_-]{10,}|sk-proj-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{20,}"

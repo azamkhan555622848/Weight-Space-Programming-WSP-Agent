@@ -1,0 +1,14 @@
+{
+ "variant": "paper:p50c",
+ "thinking": true,
+ "max_tokens": 32768,
+ "sampling": {
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "presence_penalty": 1.5
+ },
+ "samples": 1,
+ "limit": 100,
+ "take": 48
+}

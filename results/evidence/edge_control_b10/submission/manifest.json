@@ -1,0 +1,12 @@
+{
+ "edited_tensors": [
+  "s2.c2.w",
+  "stem.w"
+ ],
+ "changed_entries": {
+  "stem.w": 27,
+  "s2.c2.w": 288
+ },
+ "changed_total": 315,
+ "weights": "submission/weights.npz"
+}

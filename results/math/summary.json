@@ -1,0 +1,154 @@
+{
+ "nothink_4096": {
+  "base": {
+   "math500": {
+    "n": 100,
+    "acc": 47.0,
+    "cut_share": 37.0,
+    "loop_share": 1.0,
+    "mean_tokens": 2176
+   }
+  },
+  "paper_p50c": {
+   "math500": {
+    "n": 100,
+    "acc": 37.0,
+    "cut_share": 37.0,
+    "loop_share": 0.0,
+    "mean_tokens": 2206,
+    "gain_vs_base": -10.0,
+    "se": 5.0,
+    "paired_problems": 100
+   }
+  }
+ },
+ "think_32768": {
+  "base": {
+   "math500": {
+    "n": 48,
+    "acc": 8.3,
+    "cut_share": 91.7,
+    "loop_share": 89.6,
+    "mean_tokens": 30538
+   }
+  },
+  "paper_p50c": {
+   "math500": {
+    "n": 48,
+    "acc": 52.1,
+    "cut_share": 37.5,
+    "loop_share": 14.6,
+    "mean_tokens": 22090,
+    "gain_vs_base": 43.8,
+    "se": 7.2,
+    "paired_problems": 48
+   }
+  }
+ },
+ "think_8192": {
+  "base": {
+   "gsm8k": {
+    "n": 100,
+    "acc": 9.0,
+    "cut_share": 90.0,
+    "loop_share": 75.0,
+    "mean_tokens": 7763
+   },
+   "math500": {
+    "n": 100,
+    "acc": 9.0,
+    "cut_share": 93.0,
+    "loop_share": 55.0,
+    "mean_tokens": 7933
+   }
+  },
+  "paper_p10c": {
+   "gsm8k": {
+    "n": 100,
+    "acc": 14.0,
+    "cut_share": 89.0,
+    "loop_share": 22.0,
+    "mean_tokens": 7816,
+    "gain_vs_base": 5.0,
+    "se": 4.1,
+    "paired_problems": 100
+   },
+   "math500": {
+    "n": 100,
+    "acc": 6.0,
+    "cut_share": 94.0,
+    "loop_share": 15.0,
+    "mean_tokens": 7919,
+    "gain_vs_base": -3.0,
+    "se": 2.6,
+    "paired_problems": 100
+   }
+  },
+  "paper_p25c": {
+   "gsm8k": {
+    "n": 100,
+    "acc": 10.0,
+    "cut_share": 93.0,
+    "loop_share": 34.0,
+    "mean_tokens": 7853,
+    "gain_vs_base": 1.0,
+    "se": 3.6,
+    "paired_problems": 100
+   },
+   "math500": {
+    "n": 100,
+    "acc": 6.0,
+    "cut_share": 94.0,
+    "loop_share": 19.0,
+    "mean_tokens": 7950,
+    "gain_vs_base": -3.0,
+    "se": 3.0,
+    "paired_problems": 100
+   }
+  },
+  "paper_p50c": {
+   "gsm8k": {
+    "n": 100,
+    "acc": 44.0,
+    "cut_share": 54.0,
+    "loop_share": 0.0,
+    "mean_tokens": 6325,
+    "gain_vs_base": 35.0,
+    "se": 5.4,
+    "paired_problems": 100
+   },
+   "math500": {
+    "n": 100,
+    "acc": 14.0,
+    "cut_share": 85.0,
+    "loop_share": 0.0,
+    "mean_tokens": 7698,
+    "gain_vs_base": 5.0,
+    "se": 3.3,
+    "paired_problems": 100
+   }
+  },
+  "run_runs_qwen_b10": {
+   "gsm8k": {
+    "n": 100,
+    "acc": 18.0,
+    "cut_share": 87.0,
+    "loop_share": 53.0,
+    "mean_tokens": 7884,
+    "gain_vs_base": 9.0,
+    "se": 4.7,
+    "paired_problems": 100
+   },
+   "math500": {
+    "n": 100,
+    "acc": 6.0,
+    "cut_share": 94.0,
+    "loop_share": 33.0,
+    "mean_tokens": 7971,
+    "gain_vs_base": -3.0,
+    "se": 2.2,
+    "paired_problems": 100
+   }
+  }
+ }
+}

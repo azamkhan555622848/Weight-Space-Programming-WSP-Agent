@@ -1,0 +1,12 @@
+{
+ "task": "edge_backdoor",
+ "backend": "anthropic",
+ "model": "control",
+ "effort": "high",
+ "budget": 10,
+ "max_runs": 100,
+ "max_turns": 400,
+ "handoff_every": 40,
+ "explain": true,
+ "device": "cpu"
+}

@@ -1,0 +1,9 @@
+# One line-ending style in the repository and in every checkout, so text files are byte-identical on Windows, Linux and macOS.
+* text=auto eol=lf
+
+# Weights, arrays and images are never text.
+*.npz binary
+*.npy binary
+*.safetensors binary
+*.pt binary
+*.png binary

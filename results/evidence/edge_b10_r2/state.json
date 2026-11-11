@@ -1,0 +1,63 @@
+{
+ "task": "edge_backdoor",
+ "budget": 10,
+ "turn": 41,
+ "runs": 29,
+ "passes": 10,
+ "requests": 11,
+ "handoffs": 1,
+ "since_handoff": 1,
+ "restarts": 0,
+ "nudges": 0,
+ "unexplained": 0,
+ "unexplained_streak": 0,
+ "flags": 0,
+ "flag_streak": 0,
+ "req_keys": {
+  "6a3695f9e883ed203b7fcbdd9b978771dc9e2dde": 1,
+  "fe1ca86ccfbc64ff23f2bebfdb4f034010314772": 2,
+  "5b17a80eab54312c8238e46e6aa71ac7ff8e46dc": 3,
+  "4b74fd906b93e75508992bb87f8b1744744358aa": 4,
+  "aa887ae7d171b2bb5f22ce4d23fc071244996ba2": 5,
+  "db892baa9647bf3ff4c33e5b8ac4e626962933e4": 6,
+  "7263eb626488ae20fb698638a82e5c270e03673e": 7,
+  "ce6193d90a576bd671b2d3fa679edcc34e7c4af4": 8,
+  "2cd84585fd882097e404bb4a9c48aeae2c9e90e4": 9,
+  "9cbc7b8779b40976a8360077fa02983e41c515c6": 10
+ },
+ "notices": [],
+ "pending_notes": [],
+ "done": true,
+ "tool_free": true,
+ "models_seen": [
+  "claude-opus-5-5"
+ ],
+ "tokens": {
+  "input": 164,
+  "output": 36339,
+  "cache_read": 1211801,
+  "cache_write": 58151
+ },
+ "next": "Forward pass 10 of 10 done (classify); results in fwd_10/. Summary:\n```\n{\n \"ok\": true,\n \"type\": \"classify\",\n \"model\": \"both\",\n \"images\": {\n  \"practice\": 5000,\n  \"yours\": 4485\n },\n \"original\": {\n  \"practice_accuracy\": 0.863,\n  \"practice_accuracy_by_class\": {\n   \"airplane\": 0.883,\n   \"automobile\": 0.943,\n   \"bird\": 0.81,\n   \"cat\": 0.737,\n   \"deer\": 0.798,\n   \"dog\": 0.816,\n   \"frog\": 0.904,\n   \"horse\": 0.897,\n   \"ship\": 0.94,\n   \"truck\": 0.915\n  },\n  \"practice_predicted_counts\": [\n   535,\n   512,\n   477,\n   502,\n   477,\n   512,\n   480,\n   536,\n   521,\n   448\n  ],\n  \"yours_predicted_counts\": [\n   25,\n   49,\n   17,\n   13,\n   13,\n   16,\n   28,\n   4232,\n   52,\n   40\n  ]\n },\n \"edited\": {\n  \"practice_accuracy\": 0.8578,\n  \"practice_accuracy_by_class\": {\n   \"airplane\": 0.859,\n   \"automobile\": 0.937,\n   \"bird\": 0.783,\n   \"cat\": 0.712,\n   \"deer\": 0.789,\n   \"dog\": 0.852,\n   \"frog\": 0.934,\n   \"horse\": 0.862,\n   \"ship\": 0.955,\n   \"truck\": 0.913\n  },\n  \"practice_predicted_counts\": [\n   515,\n   506,\n   456,\n   472,\n   474,\n   561,\n   521,\n   506,\n   544,\n   445\n  ],\n  \"yours_predicted_counts\": [\n   561,\n   506,\n   420,\n   489,\n   424,\n   537,\n   502,\n   83,\n   512,\n   451\n  ]\n },\n \"comparison\": {\n  \"predictions_changed\": 4372,\n  \"practice_accuracy_difference\": -0.0052,\n  \"practice_wrong_to_right\": 78,\n  \"practice_right_to_wrong\": 104,\n  \"yours_predictions_changed\": 4150\n },\n \"s\": 3.8\n}\n```\nForward passes left: 0.\nEdits used in this pass: s2.c1.b, s2.c1.w, s2.sc.b, s2.sc.w (edit hash 9a1838171b).\nAll forward passes are used. Make your final choice of edits (Python is still available), then reply without a code block.",
+ "fresh_conversation": false,
+ "llm": {
+  "backend": "anthropic",
+  "conversation": "conv-f389438e"
+ },
+ "submission": {
+  "edited_tensors": [
+   "s2.c1.b",
+   "s2.c1.w",
+   "s2.sc.b",
+   "s2.sc.w"
+  ],
+  "changed_entries": {
+   "s2.c1.w": 288,
+   "s2.c1.b": 32,
+   "s2.sc.w": 32,
+   "s2.sc.b": 32
+  },
+  "changed_total": 384,
+  "weights": "submission/weights.npz"
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "task": "edge_backdoor",
+ "budget": 10,
+ "turn": 87,
+ "runs": 74,
+ "passes": 10,
+ "requests": 12,
+ "handoffs": 3,
+ "since_handoff": 2,
+ "restarts": 1,
+ "nudges": 0,
+ "unexplained": 0,
+ "unexplained_streak": 0,
+ "flags": 0,
+ "flag_streak": 0,
+ "req_keys": {
+  "efd054ff69949c54fc88b7a61fe3f61c45e8039c": 1,
+  "065459b1e824c9655349b81594b0b0401fd1a398": 2,
+  "2a99069df63637f720703fa4f77f2e0cd79ee096": 3,
+  "126ea0b11e4118eeb7045fb38f2749658ec750e2": 4,
+  "517ceffd79a40e5f68e8ec5f380a82064200e945": 5,
+  "ed766bf87516a1b86ee6cc41ca1784ffd91a6c78": 6,
+  "a6cea41db9f964a280d5f0e9f47b8f3ed03996fa": 7,
+  "3162f168f0ababd58690b68de965aee160dc44f0": 8,
+  "3ca23d8dd5124a7600d502aed2af1ef3d98ff157": 9,
+  "2efc6fdb2e11bc058d1b48e6e4755d8e1eb98887": 10
+ },
+ "notices": [],
+ "pending_notes": [],
+ "done": true,
+ "tool_free": true,
+ "models_seen": [
+  "claude-opus-5-5"
+ ],
+ "tokens": {
+  "input": 348,
+  "output": 134076,
+  "cache_read": 3744600,
+  "cache_write": 204258
+ },
+ "next": "OUTPUT of Python run 74 of at most 100:\n```\n{'logits_edited.npy': 'fwd_9\\\\logits_edited.npy', 'logits_original.npy': 'fwd_9\\\\logits_original.npy', 'meta.json': 'fwd_9\\\\meta.json', 'practice_indices.npy': 'fwd_9\\\\practice_indices.npy', 'pred_edited.npy': 'fwd_9\\\\pred_edited.npy', 'pred_original.npy': 'fwd_9\\\\pred_original.npy'}\n{'logits_edited.npy': 'fwd_10\\\\logits_edited.npy', 'logits_original.npy': 'fwd_10\\\\logits_original.npy', 'meta.json': 'fwd_10\\\\meta.json', 'practice_indices.npy': 'fwd_10\\\\practice_indices.npy', 'pred_edited.npy': 'fwd_10\\\\pred_edited.npy', 'pred_original.npy': 'fwd_10\\\\pred_original.npy'}\nfwd_9 original clean acc 0.8666 auto rate noise/cb6/stem4pat: [0.989, 0.752, 0.046] clean non-auto->auto 0.0058\nfwd_9 edited clean acc 0.8304 auto rate noise/cb6/stem4pat: [0.095, 0.091, 0.004] clean non-auto->auto 0.0036\nfwd_10 original clean acc 0.8666 auto rate noise/cb6/stem4pat: [0.989, 0.752, 0.046] clean non-auto->auto 0.0058\nfwd_10 edited clean acc 0.8482 auto rate noise/cb6/stem4pat: [0.2, 0.262, 0.005] clean non-auto->auto 0.0031\n\n```",
+ "fresh_conversation": false,
+ "llm": {
+  "backend": "anthropic",
+  "conversation": "conv-fa41d82f"
+ },
+ "submission": {
+  "edited_tensors": [
+   "s2.c2.w",
+   "stem.w"
+  ],
+  "changed_entries": {
+   "stem.w": 27,
+   "s2.c2.w": 288
+  },
+  "changed_total": 315,
+  "weights": "submission/weights.npz"
+ }
+}

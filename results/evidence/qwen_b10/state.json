@@ -1,0 +1,92 @@
+{
+ "task": "qwen_math",
+ "budget": 10,
+ "turn": 57,
+ "runs": 47,
+ "passes": 10,
+ "requests": 9,
+ "handoffs": 2,
+ "since_handoff": 39,
+ "restarts": 3,
+ "nudges": 0,
+ "unexplained": 0,
+ "unexplained_streak": 0,
+ "flags": 0,
+ "flag_streak": 0,
+ "req_keys": {
+  "fb690411d938c4e38a410470df51b6ef5fcb6f93": 1,
+  "30e0b7064e448ad3e85a978b335041408f61bc2b": 3,
+  "25e26b3f3b80b3d8152ee49dcda1e34e96e05947": 4,
+  "ab3dae042629725f98a529717f9d8e8f82893dda": 5,
+  "755a74c2b414a6e0686f28f93b180e9a52fd6fe6": 6,
+  "e39c3f117d0e64c3742a9db64a083098de17b86d": 7,
+  "1197603ad5177e67de103c5ba740a91c138c80d2": 8,
+  "3366d0329451ec2d902e5d94c3f52c8f9829a679": 9,
+  "5839d5ff8ed76434f0951ffcbcd832284f28c4eb": 10
+ },
+ "notices": [
+  "001_interrupted_pass.txt"
+ ],
+ "pending_notes": [],
+ "done": true,
+ "tool_free": true,
+ "models_seen": [
+  "claude-opus-5-5"
+ ],
+ "tokens": {
+  "input": 228,
+  "output": 78585,
+  "cache_read": 1677219,
+  "cache_write": 487773
+ },
+ "next": "Forward pass 10 of 10 done (generate); results in gen_10_original.jsonl and gen_10_edited.jsonl. Summary:\n```\n{\n \"ok\": true,\n \"type\": \"generate\",\n \"model\": \"both\",\n \"generations\": 256,\n \"original\": {\n  \"generations\": 128,\n  \"graded\": 128,\n  \"mean_tokens\": 7821.4,\n  \"cut_share\": 0.9297,\n  \"accuracy\": 0.0781,\n  \"accuracy_by_source\": {\n   \"gsm8k\": 0.0781,\n   \"math\": 0.0781\n  },\n  \"failures\": {\n   \"wrong_answer\": 0,\n   \"no_answer_finished\": 0,\n   \"cut_at_max_tokens\": 118\n  },\n  \"cut_ending_in_loop\": 0.7563\n },\n \"edited\": {\n  \"generations\": 128,\n  \"graded\": 128,\n  \"mean_tokens\": 7746.9,\n  \"cut_share\": 0.8828,\n  \"accuracy\": 0.1484,\n  \"accuracy_by_source\": {\n   \"gsm8k\": 0.1875,\n   \"math\": 0.1094\n  },\n  \"failures\": {\n   \"wrong_answer\": 0,\n   \"no_answer_finished\": 0,\n   \"cut_at_max_tokens\": 109\n  },\n  \"cut_ending_in_loop\": 0.6726\n },\n \"paired\": {\n  \"items\": 128,\n  \"original_accuracy\": 0.0781,\n  \"edited_accuracy\": 0.1484,\n  \"difference\": 0.0703,\n  \"se\": 0.0276,\n  \"wrong_to_right\": 11,\n  \"right_to_wrong\": 2,\n  \"identical_answers\": 0\n },\n \"s\": 4791.5\n}\n```\nForward passes left: 0.\nEdits used in this pass: model.language_model.layers.0.linear_attn.out_proj.weight, model.language_model.layers.0.mlp.down_proj.weight, model.language_model.layers.1.linear_attn.out_proj.weight, model.language_model.layers.1.mlp.down_proj.weight, model.language_model.layers.10.linear_attn.out_proj.weight, model.language_model.layers.10.mlp.down_proj.weight, model.language_model.layers.11.mlp.down_proj.weight, model.language_model.layers.11.self_attn.o_proj.weight, model.language_model.layers.12.linear_attn.out_proj.weight, model.language_model.layers.12.mlp.down_proj.weight, model.language_model.layers.13.linear_attn.out_proj.weight, model.language_model.layers.13.mlp.down_proj.weight, model.language_model.layers.14.linear_attn.out_proj.weight, model.language_model.layers.14.mlp.down_proj.weight, model.language_model.layers.15.mlp.down_proj.weight, model.language_model.layers.15.self_attn.o_proj.weight, model.language_model.layers.16.linear_attn.out_proj.weight, model.language_model.layers.16.mlp.down_proj.weight, model.language_model.layers.17.linear_attn.out_proj.weight, model.language_model.layers.17.mlp.down_proj.weight, model.language_model.layers.2.linear_attn.out_proj.weight, model.language_model.layers.2.mlp.down_proj.weight, model.language_model.layers.3.mlp.down_proj.weight, model.language_model.layers.3.self_attn.o_proj.weight, model.language_model.layers.4.linear_attn.out_proj.weight, model.language_model.layers.4.mlp.down_proj.weight, model.language_model.layers.5.linear_attn.out_proj.weight, model.language_model.layers.5.mlp.down_proj.weight, model.language_model.layers.6.linear_attn.out_proj.weight, model.language_model.layers.6.mlp.down_proj.weight, model.language_model.layers.7.mlp.down_proj.weight, model.language_model.layers.7.self_attn.o_proj.weight, model.language_model.layers.8.linear_attn.out_proj.weight, model.language_model.layers.8.mlp.down_proj.weight, model.language_model.layers.9.linear_attn.out_proj.weight, model.language_model.layers.9.mlp.down_proj.weight (edit hash c911826f17).\nAll forward passes are used. Make your final choice of edits (Python is still available), then reply without a code block.",
+ "fresh_conversation": false,
+ "llm": {
+  "backend": "anthropic",
+  "conversation": "conv-fea693b3"
+ },
+ "accounting": [
+  "2026-11-07 00:40: +1 pass. Pass 1 (generation, original model, 256 answers; requests/fwd_1.json) was interrupted by a killed process after writing work/gen_1.jsonl, so it was not counted, but the editor used gen_1.jsonl after the restart. Counted retroactively; editor told by notices/001_interrupted_pass.txt."
+ ],
+ "submission": {
+  "edited_tensors": [
+   "model.language_model.layers.0.linear_attn.out_proj.weight",
+   "model.language_model.layers.0.mlp.down_proj.weight",
+   "model.language_model.layers.1.linear_attn.out_proj.weight",
+   "model.language_model.layers.1.mlp.down_proj.weight",
+   "model.language_model.layers.10.linear_attn.out_proj.weight",
+   "model.language_model.layers.10.mlp.down_proj.weight",
+   "model.language_model.layers.11.mlp.down_proj.weight",
+   "model.language_model.layers.11.self_attn.o_proj.weight",
+   "model.language_model.layers.12.linear_attn.out_proj.weight",
+   "model.language_model.layers.12.mlp.down_proj.weight",
+   "model.language_model.layers.13.linear_attn.out_proj.weight",
+   "model.language_model.layers.13.mlp.down_proj.weight",
+   "model.language_model.layers.14.linear_attn.out_proj.weight",
+   "model.language_model.layers.14.mlp.down_proj.weight",
+   "model.language_model.layers.15.mlp.down_proj.weight",
+   "model.language_model.layers.15.self_attn.o_proj.weight",
+   "model.language_model.layers.16.linear_attn.out_proj.weight",
+   "model.language_model.layers.16.mlp.down_proj.weight",
+   "model.language_model.layers.17.linear_attn.out_proj.weight",
+   "model.language_model.layers.17.mlp.down_proj.weight",
+   "model.language_model.layers.2.linear_attn.out_proj.weight",
+   "model.language_model.layers.2.mlp.down_proj.weight",
+   "model.language_model.layers.3.mlp.down_proj.weight",
+   "model.language_model.layers.3.self_attn.o_proj.weight",
+   "model.language_model.layers.4.linear_attn.out_proj.weight",
+   "model.language_model.layers.4.mlp.down_proj.weight",
+   "model.language_model.layers.5.linear_attn.out_proj.weight",
+   "model.language_model.layers.5.mlp.down_proj.weight",
+   "model.language_model.layers.6.linear_attn.out_proj.weight",
+   "model.language_model.layers.6.mlp.down_proj.weight",
+   "model.language_model.layers.7.mlp.down_proj.weight",
+   "model.language_model.layers.7.self_attn.o_proj.weight",
+   "model.language_model.layers.8.linear_attn.out_proj.weight",
+   "model.language_model.layers.8.mlp.down_proj.weight",
+   "model.language_model.layers.9.linear_attn.out_proj.weight",
+   "model.language_model.layers.9.mlp.down_proj.weight"
+  ],
+  "changed_entries_total": 80806308
+ }
+}

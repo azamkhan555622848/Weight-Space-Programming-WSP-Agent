@@ -1,0 +1,26 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# Downloads and run output, rebuilt by `wsp setup` or created by runs. Anchored to the repo root on purpose: an unanchored
+# `runs/` or `data/` would also hide folders of that name inside results/ or the package.
+/models/
+/data/
+/runs/
+/reference_edits/
+/lm_understand-logs-main/
+
+# Local tool settings, and logs (they hold local paths)
+.claude/
+*.log
+/.wsp-*
+.wsp/

@@ -1,0 +1,16 @@
+{
+ "edited_tensors": [
+  "s2.c1.b",
+  "s2.c1.w",
+  "s3.c2.b",
+  "s3.c2.w"
+ ],
+ "changed_entries": {
+  "s2.c1.w": 54,
+  "s2.c1.b": 6,
+  "s3.c2.w": 576,
+  "s3.c2.b": 64
+ },
+ "changed_total": 700,
+ "weights": "submission/weights.npz"
+}
